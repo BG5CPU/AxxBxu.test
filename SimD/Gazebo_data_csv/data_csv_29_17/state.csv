@@ -1,0 +1,5 @@
+%time,field.header.seq,field.header.stamp,field.header.frame_id,field.connected,field.armed,field.guided,field.manual_input,field.mode,field.system_status
+16462000000,17,16001000000,,1,0,0,0,OFFBOARD,3
+17001000000,18,17001000000,,1,0,0,0,OFFBOARD,3
+17999000000,19,17999000000,,1,1,0,0,OFFBOARD,4
+18998000000,20,18998000000,,1,1,0,0,OFFBOARD,4
