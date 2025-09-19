@@ -4,7 +4,10 @@ clear; clc; close all;
 %% load data ==============================================================
 load("Gazebo_data_mat\data01.mat");
 
-[nRow, nColumn] = size(data_input_output_01);
+
+data_input_output = data_input_output_01;
+
+[nRow, nColumn] = size(data_input_output);
 num_steps = nRow-1;
 
 cl_time = 1;
@@ -14,21 +17,21 @@ cl_u1 = 2; cl_u2 = 4; cl_u3 = 6;
 cl_x1 = 08; cl_x2 = 10; cl_x3 = 12;
 cl_x4 = 14; cl_x5 = 16; cl_x6 = 18;
 
-% dif_time = data_input_output_01(:,1) - data_input_output_01(:,3);
+% dif_time = data_input_output(:,1) - data_input_output(:,3);
 
-sample_time_diff = diff(data_input_output_01(:,cl_time));
+sample_time_diff = diff(data_input_output(:,cl_time));
 % plot(sample_time, '*');
 h = mode(sample_time_diff)/1e9;
 
 
 % quat2eul (Robotics System Toolbox)
 % [w, x, y, z] -> quat2eul -> [Z, Y, X] (Yaw, Pitch, Roll)
-% Euler_rad = quat2eul(data_input_output_01(:,[cl_q0, cl_q1, cl_q2, cl_q3]), 'ZYX'); % [Yaw, Pitch, Roll]
+% Euler_rad = quat2eul(data_input_output(:,[cl_q0, cl_q1, cl_q2, cl_q3]), 'ZYX'); % [Yaw, Pitch, Roll]
 % Euler_RPY_rad = [Euler_rad(:, 3), Euler_rad(:, 2), Euler_rad(:, 1)]; % [Roll, Pitch, Yaw]
 
-% x_exp = [Euler_RPY_rad, data_input_output_01(:,[cl_x4, cl_x5, cl_x6])]';
-x_exp = data_input_output_01(:,[cl_x1, cl_x2, cl_x3, cl_x4, cl_x5, cl_x6])';
-u_exp = data_input_output_01(:,[cl_u1, cl_u2, cl_u3])';
+% x_exp = [Euler_RPY_rad, data_input_output(:,[cl_x4, cl_x5, cl_x6])]';
+x_exp = data_input_output(:,[cl_x1, cl_x2, cl_x3, cl_x4, cl_x5, cl_x6])';
+u_exp = data_input_output(:,[cl_u1, cl_u2, cl_u3])';
 
 
 
@@ -130,7 +133,7 @@ EB = EAEB(:,dim_xiA+1:dim_xiA+dim_xiB);
 
 dataA = bWI0*bWI0';
 dataB = -bXI1*bWI0';
-dataC = bXI1*bXI1' - eye(dim_x)*0.000;
+dataC = bXI1*bXI1' - eye(dim_x)*0.0001;
 
 disp("min eig is " + min(eig(dataA)));
 
@@ -139,7 +142,7 @@ disp("min eig is " + min(eig(dataA)));
 %% solve the controller ===================================================
 
 % set the domain: |x| <= rx
-rx = 0.5; 
+rx = 1; 
 
 % XIA
 xiA11 = 1;

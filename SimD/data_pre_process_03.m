@@ -3,10 +3,10 @@ clear; clc; close all;
 %% import data ============================================================
 
 % file path
-file1 = 'Gazebo_data_csv/sin_0/imu_data.csv';
-file2 = 'Gazebo_data_csv/sin_0/attitude_r_p_y.csv';
-file3 = 'Gazebo_data_csv/sin_0/actuator_control.csv';
-file4 = 'Gazebo_data_csv/sin_0/input_x_y_z.csv';
+file1 = 'Gazebo_data_csv/sin0.25/imu_data.csv';
+file2 = 'Gazebo_data_csv/sin0.25/attitude_r_p_y.csv';
+file3 = 'Gazebo_data_csv/sin0.25/actuator_control.csv';
+file4 = 'Gazebo_data_csv/sin0.25/input_x_y_z.csv';
 
 
 % read (imu_data.csv)
@@ -51,16 +51,16 @@ plot(matrix_actuator_control(:,1));
 hold on;
 plot(matrix_input_x_y_z(:,1));
 figure(2);
-plot(matrix_actuator_control(6:end,1) - matrix_input_x_y_z(:,1), '*');
+plot(matrix_actuator_control(2:end,1) - matrix_input_x_y_z(:,1), '*');
 
 
-matrix_actuator_control = matrix_actuator_control(6:end,:);
+matrix_actuator_control = matrix_actuator_control(2:end,:);
 
 figure(3);
 plot(matrix_actuator_control(:,5) - matrix_input_x_y_z(:,6), '*');
 
 
-matrix_imu_data = matrix_imu_data(25:end,:);
+matrix_imu_data = matrix_imu_data(46:end-1,:);
 figure(4);
 plot(matrix_actuator_control(:,1));
 hold on;
@@ -83,15 +83,15 @@ actuator_control_y = matrix_input_x_y_z(:,[1,5]);
 actuator_control_z = matrix_input_x_y_z(:,[1,6]);
 
 
-data_input_output_02 = [actuator_control_x, actuator_control_y, actuator_control_z, ...
+data_input_output_03 = [actuator_control_x, actuator_control_y, actuator_control_z, ...
                         pose_angle_x, pose_angle_y, pose_angle_z, ...
                         velocity_angle_x, velocity_angle_y, velocity_angle_z];
 
 
-Pstart01 = 601;
-Pend01 = 5995;
-data_input_output_02 = data_input_output_02(Pstart01:Pend01 , :);
-save('./Gazebo_data_mat/data02.mat', 'data_input_output_02');
+Pstart01 = 1990;
+Pend01 = 3150;
+data_input_output_03 = data_input_output_03(Pstart01:Pend01 , :);
+save('./Gazebo_data_mat/data03.mat', 'data_input_output_03');
 
 
 
