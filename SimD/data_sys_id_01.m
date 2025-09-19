@@ -2,10 +2,11 @@ clear; clc; close all;
 
 
 %% load data ==============================================================
-load("Gazebo_data_mat\data01.mat");
+% load("Gazebo_data_mat\data02.mat");
+load("Gazebo_data_mat/data02.mat");
 
 
-data_input_output = data_input_output_01;
+data_input_output = data_input_output_02;
 
 [nRow, nColumn] = size(data_input_output);
 num_steps = nRow-1;
@@ -133,7 +134,7 @@ EB = EAEB(:,dim_xiA+1:dim_xiA+dim_xiB);
 
 dataA = bWI0*bWI0';
 dataB = -bXI1*bWI0';
-dataC = bXI1*bXI1' - eye(dim_x)*0.0001;
+dataC = bXI1*bXI1' - eye(dim_x)*0.00;
 
 disp("min eig is " + min(eig(dataA)));
 
@@ -142,7 +143,7 @@ disp("min eig is " + min(eig(dataA)));
 %% solve the controller ===================================================
 
 % set the domain: |x| <= rx
-rx = 1; 
+rx = 0.0001; 
 
 % XIA
 xiA11 = 1;
