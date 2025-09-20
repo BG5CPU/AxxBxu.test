@@ -3,10 +3,10 @@ clear; clc; close all;
 
 %% load data ==============================================================
 % load("Gazebo_data_mat\data02.mat");
-load("Gazebo_data_mat/data02.mat");
+load("Gazebo_data_mat/data04.mat");
 
 
-data_input_output = data_input_output_02;
+data_input_output = data_input_output_04(4465:8265,:);
 
 [nRow, nColumn] = size(data_input_output);
 num_steps = nRow-1;
@@ -143,7 +143,7 @@ disp("min eig is " + min(eig(dataA)));
 %% solve the controller ===================================================
 
 % set the domain: |x| <= rx
-rx = 0.0001; 
+rx = 0.0; 
 
 % XIA
 xiA11 = 1;
@@ -189,7 +189,8 @@ cvx_begin sdp % quiet
     % variable mu_u semidefinite;
     
     % minimize( mu_u - 0*mu_l + 1*epGa );
-    minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
+    % minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
+    % minimize( 0.0*lambda_max(lyGa) - 0.0*lambda_min(lyGa) - 0.0*epGa + 1.0*trace(lyGa) );
 
     subject to   
         for iv = 1:length(barQ)
@@ -198,7 +199,7 @@ cvx_begin sdp % quiet
                        dataB',       -barQ{iv}*[lyGa;kY],   -dataA ];
             blockS <= 0;
         end
-        epGa >= 0.00001;
+        epGa >= 0.0001;
         lyGa >= 0.0001 * eye(dim_x);
         % lyGa >= mu_l * eye(dim_x);
         % lyGa <= (mu_l+mu_u) * eye(dim_x);
