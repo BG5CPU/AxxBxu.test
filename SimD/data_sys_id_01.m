@@ -134,7 +134,7 @@ EB = EAEB(:,dim_xiA+1:dim_xiA+dim_xiB);
 
 dataA = bWI0*bWI0';
 dataB = -bXI1*bWI0';
-dataC = bXI1*bXI1' - eye(dim_x)*0.00;
+dataC = bXI1*bXI1' - eye(dim_x)*0.0001;
 
 disp("min eig is " + min(eig(dataA)));
 
@@ -143,7 +143,7 @@ disp("min eig is " + min(eig(dataA)));
 %% solve the controller ===================================================
 
 % set the domain: |x| <= rx
-rx = 0.0; 
+rx = 0.1; 
 
 % XIA
 xiA11 = 1;
@@ -185,11 +185,8 @@ cvx_begin sdp % quiet
     variable epGa semidefinite;
     variable lyGa(dim_x,dim_x) semidefinite;
     variable kY(dim_u,dim_x);
-    % variable mu_l semidefinite;
-    % variable mu_u semidefinite;
     
-    % minimize( mu_u - 0*mu_l + 1*epGa );
-    % minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
+    minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
     % minimize( 0.0*lambda_max(lyGa) - 0.0*lambda_min(lyGa) - 0.0*epGa + 1.0*trace(lyGa) );
 
     subject to   
@@ -199,10 +196,8 @@ cvx_begin sdp % quiet
                        dataB',       -barQ{iv}*[lyGa;kY],   -dataA ];
             blockS <= 0;
         end
-        epGa >= 0.0001;
-        lyGa >= 0.0001 * eye(dim_x);
-        % lyGa >= mu_l * eye(dim_x);
-        % lyGa <= (mu_l+mu_u) * eye(dim_x);
+        epGa >= 0.001;
+        lyGa >= 0.001 * eye(dim_x);
         
 cvx_end
 
