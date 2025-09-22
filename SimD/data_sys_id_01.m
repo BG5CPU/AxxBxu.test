@@ -6,10 +6,10 @@ clear; clc; close all;
 load("Gazebo_data_mat/data04.mat");
 
 
-data_input_output = data_input_output_04(4465:8265,:);
+data_input_output = data_input_output_04(4205:8705,:);
 
 [nRow, nColumn] = size(data_input_output);
-num_steps = nRow-1;
+num_steps = nRow;
 
 cl_time = 1;
 cl_u1 = 2; cl_u2 = 4; cl_u3 = 6;
@@ -186,8 +186,8 @@ cvx_begin sdp % quiet
     variable lyGa(dim_x,dim_x) semidefinite;
     variable kY(dim_u,dim_x);
     
-    minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
-    % minimize( 0.0*lambda_max(lyGa) - 0.0*lambda_min(lyGa) - 0.0*epGa + 1.0*trace(lyGa) );
+    % minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
+    minimize( 1.0*lambda_max(lyGa) - 0.0*lambda_min(lyGa) - 0.0*epGa - 0.1*trace(lyGa) );
 
     subject to   
         for iv = 1:length(barQ)
@@ -196,8 +196,8 @@ cvx_begin sdp % quiet
                        dataB',       -barQ{iv}*[lyGa;kY],   -dataA ];
             blockS <= 0;
         end
-        epGa >= 0.001;
-        lyGa >= 0.001 * eye(dim_x);
+        epGa >= 1e-12;
+        lyGa >= 1e-12 * eye(dim_x);
         
 cvx_end
 
