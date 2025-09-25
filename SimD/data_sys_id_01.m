@@ -3,10 +3,10 @@ clear; clc; close all;
 
 %% load data ==============================================================
 % load("Gazebo_data_mat\data02.mat");
-load("Gazebo_data_mat/data04.mat");
+load("Gazebo_data_mat/data05.mat");
 
 
-data_input_output = data_input_output_04(4205:8705,:);
+data_input_output = data_input_output_05(1:end,:);
 
 [nRow, nColumn] = size(data_input_output);
 num_steps = nRow;
@@ -22,7 +22,7 @@ cl_x4 = 14; cl_x5 = 16; cl_x6 = 18;
 
 sample_time_diff = diff(data_input_output(:,cl_time));
 % plot(sample_time, '*');
-h = mode(sample_time_diff)/1e9;
+h = 2e6/1e9;
 
 
 % quat2eul (Robotics System Toolbox)
@@ -134,7 +134,7 @@ EB = EAEB(:,dim_xiA+1:dim_xiA+dim_xiB);
 
 dataA = bWI0*bWI0';
 dataB = -bXI1*bWI0';
-dataC = bXI1*bXI1' - eye(dim_x)*0.005;
+dataC = bXI1*bXI1' - eye(dim_x)*0.00;
 
 disp("min eig is " + min(eig(dataA)));
 
@@ -143,7 +143,7 @@ disp("min eig is " + min(eig(dataA)));
 %% solve the controller ===================================================
 
 % set the domain: |x| <= rx
-rx = 0.5; 
+rx = 0.0; 
 
 % XIA
 xiA11 = 1;
@@ -188,8 +188,7 @@ cvx_begin sdp % quiet
     variable lyGa(dim_x,dim_x) semidefinite;
     variable kY(dim_u,dim_x);
     
-    minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
-    % minimize( 1.0*lambda_max(lyGa) - 0.0*lambda_min(lyGa) - 0.0*epGa - 0.1*trace(lyGa) );
+    % minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
 
     subject to   
         for iv = 1:length(barQ)
@@ -198,8 +197,8 @@ cvx_begin sdp % quiet
                        dataB',       -barQ{iv}*[lyGa;kY],   -dataA ];
             blockS <= 0;
         end
-        epGa >= 1e-12;
-        lyGa >= 1e-12 * eye(dim_x);
+        epGa >= 1e-12*0;
+        lyGa >= 1e-12* eye(dim_x);
         
 cvx_end
 

@@ -3,11 +3,11 @@ clear; clc; close all;
 %% import data ============================================================
 
 % file path
-file1 = 'Gazebo_data_csv/mpc_0.2sin_100/imu_data.csv';
-file2 = 'Gazebo_data_csv/mpc_0.2sin_100/attitude_r_p_y.csv';
-file3 = 'Gazebo_data_csv/mpc_0.2sin_100/actuator_control.csv';
-file4 = 'Gazebo_data_csv/mpc_0.2sin_100/input_x_y_z.csv';
-file5 = 'Gazebo_data_csv/mpc_0.2sin_100/pose.csv';
+file1 = 'Gazebo_data_csv/0.4vk_0.1sin_80/imu_data.csv';
+file2 = 'Gazebo_data_csv/0.4vk_0.1sin_80/attitude_r_p_y.csv';
+file3 = 'Gazebo_data_csv/0.4vk_0.1sin_80/actuator_control.csv';
+file4 = 'Gazebo_data_csv/0.4vk_0.1sin_80/input_x_y_z.csv';
+file5 = 'Gazebo_data_csv/0.4vk_0.1sin_80/pose.csv';
 
 
 % read (imu_data.csv)
