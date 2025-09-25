@@ -3,10 +3,10 @@ clear; clc; close all;
 
 %% load data ==============================================================
 % load("Gazebo_data_mat\data02.mat");
-load("Gazebo_data_mat/data05.mat");
+load("Gazebo_data_mat/data06.mat");
 
 
-data_input_output = data_input_output_05(1:end,:);
+data_input_output = data_input_output_06(1:end,:);
 
 [nRow, nColumn] = size(data_input_output);
 num_steps = nRow;
@@ -134,7 +134,7 @@ EB = EAEB(:,dim_xiA+1:dim_xiA+dim_xiB);
 
 dataA = bWI0*bWI0';
 dataB = -bXI1*bWI0';
-dataC = bXI1*bXI1' - eye(dim_x)*0.00;
+dataC = bXI1*bXI1' - eye(dim_x)*0.0001;
 
 disp("min eig is " + min(eig(dataA)));
 
@@ -143,7 +143,7 @@ disp("min eig is " + min(eig(dataA)));
 %% solve the controller ===================================================
 
 % set the domain: |x| <= rx
-rx = 0.0; 
+rx = 0.1; 
 
 % XIA
 xiA11 = 1;
@@ -188,7 +188,7 @@ cvx_begin sdp % quiet
     variable lyGa(dim_x,dim_x) semidefinite;
     variable kY(dim_u,dim_x);
     
-    % minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
+    minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
 
     subject to   
         for iv = 1:length(barQ)
