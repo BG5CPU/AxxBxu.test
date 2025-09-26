@@ -6,7 +6,7 @@ clear; clc; close all;
 load("Gazebo_data_mat/data06.mat");
 
 
-data_input_output = data_input_output_06(1:end,:);
+data_input_output = data_input_output_06(200:3200,:);
 
 [nRow, nColumn] = size(data_input_output);
 num_steps = nRow;
@@ -134,7 +134,7 @@ EB = EAEB(:,dim_xiA+1:dim_xiA+dim_xiB);
 
 dataA = bWI0*bWI0';
 dataB = -bXI1*bWI0';
-dataC = bXI1*bXI1' - eye(dim_x)*0.0001;
+dataC = bXI1*bXI1' - eye(dim_x)*0.00005;
 
 disp("min eig is " + min(eig(dataA)));
 
@@ -143,7 +143,7 @@ disp("min eig is " + min(eig(dataA)));
 %% solve the controller ===================================================
 
 % set the domain: |x| <= rx
-rx = 0.1; 
+rx = 0.12; 
 
 % XIA
 xiA11 = 1;
