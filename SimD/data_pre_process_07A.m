@@ -100,10 +100,11 @@ plot((matrix_input_x_y_z(:,3)), 'r.');
 plot((matrix_attitude_r_p_y(:,3)), 'g.');
 hold off;
 
-Tlen_matrix_input_x_y_z = -matrix_input_x_y_z(1,3)+matrix_input_x_y_z(end,3);
-Nlen_matrix_input_x_y_z = round(Tlen_matrix_input_x_y_z/2e6);
-time = matrix_input_x_y_z(1,3) + (0:Nlen_matrix_input_x_y_z-1)*2e6;
-time = time';
+% Tlen_matrix_input_x_y_z = -matrix_input_x_y_z(1,3)+matrix_input_x_y_z(end,3);
+% Nlen_matrix_input_x_y_z = round(Tlen_matrix_input_x_y_z/2e6);
+% time = matrix_input_x_y_z(1,3) + (0:Nlen_matrix_input_x_y_z-1)*2e6;
+% time = time';
+time = matrix_input_x_y_z(:,3);
 
 
 pose_angle_x = interpolate_to_match_A(time, matrix_attitude_r_p_y(:,[3,4]));
@@ -141,15 +142,15 @@ hold off;
 
 
 
-data_input_output_07 = [actuator_control_x, actuator_control_y, actuator_control_z, ...
+data_input_output_07A = [actuator_control_x, actuator_control_y, actuator_control_z, ...
                         pose_angle_x, pose_angle_y, pose_angle_z, ...
                         velocity_angle_x, velocity_angle_y, velocity_angle_z];
 
 
 Pstart01 = 4400;
 Pend01 = 26400;
-data_input_output_07 = data_input_output_07(Pstart01:Pend01 , :);
-save('./Gazebo_data_mat/data07.mat', 'data_input_output_07');
+data_input_output_07A = data_input_output_07A(Pstart01:Pend01 , :);
+save('./Gazebo_data_mat/data07A_1.mat', 'data_input_output_07A');
 
 
 

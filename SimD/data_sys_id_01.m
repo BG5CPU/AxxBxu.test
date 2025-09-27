@@ -3,10 +3,10 @@ clear; clc; close all;
 
 %% load data ==============================================================
 % load("Gazebo_data_mat\data02.mat");
-load("Gazebo_data_mat/data07.mat");
+load("Gazebo_data_mat/data07B.mat");
 
 
-data_input_output = data_input_output_07(1:end,:);
+data_input_output = data_input_output_07B(1:end,:);
 
 [nRow, nColumn] = size(data_input_output);
 num_steps = nRow;
@@ -33,6 +33,10 @@ h = 2e6/1e9;
 % x_exp = [Euler_RPY_rad, data_input_output(:,[cl_x4, cl_x5, cl_x6])]';
 x_exp = data_input_output(:,[cl_x1, cl_x2, cl_x3, cl_x4, cl_x5, cl_x6])';
 u_exp = data_input_output(:,[cl_u1, cl_u2, cl_u3])';
+
+
+% x_exp(:,[2,3]) = -x_exp(:,[2,3]);
+
 
 
 
@@ -134,7 +138,7 @@ EB = EAEB(:,dim_xiA+1:dim_xiA+dim_xiB);
 
 dataA = bWI0*bWI0';
 dataB = -bXI1*bWI0';
-dataC = bXI1*bXI1' - eye(dim_x)*0.001;
+dataC = bXI1*bXI1' - eye(dim_x)*0.00;
 
 disp("min eig is " + min(eig(dataA)));
 
@@ -143,7 +147,7 @@ disp("min eig is " + min(eig(dataA)));
 %% solve the controller ===================================================
 
 % set the domain: |x| <= rx
-rx = 0.4; 
+rx = 0.0; 
 
 % XIA
 xiA11 = 1;
