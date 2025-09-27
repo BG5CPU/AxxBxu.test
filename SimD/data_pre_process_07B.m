@@ -112,7 +112,7 @@ plot((time), 'r.');
 plot((matrix_input_x_y_z(:,3)), 'g.');
 hold off;
 
-% time = matrix_input_x_y_z(:,3);
+time = matrix_input_x_y_z(:,3);
 
 
 pose_angle_x = interpolate_to_match_A(time, matrix_attitude_r_p_y(:,[3,4]));
@@ -157,8 +157,8 @@ data_input_output_07B = [actuator_control_x, actuator_control_y, actuator_contro
 
 Pstart01 = 17000;
 Pend01 = 24000;
-data_input_output_07B = data_input_output_07B(Pstart01:Pend01 , :);
-save('./Gazebo_data_mat/data07B.mat', 'data_input_output_07B');
+% data_input_output_07B_1 = data_input_output_07B(Pstart01:Pend01 , :);
+% save('./Gazebo_data_mat/data07B_1.mat', 'data_input_output_07B_1');
 
 
 
