@@ -142,9 +142,9 @@ actuator_control_z = interpolate_to_match_A(time, matrix_input_x_y_z(:,[3,6]));
 
 
 figure(10); hold on;
-plot(actuator_control_x(:,2), 'r');
-plot(actuator_control_y(:,2), 'g');
-plot(actuator_control_z(:,2), 'b');
+plot(actuator_control_x(:,2), 'r.');
+plot(actuator_control_y(:,2), 'g.');
+plot(actuator_control_z(:,2), 'b.');
 hold off;
 
 
