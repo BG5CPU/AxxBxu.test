@@ -3,11 +3,11 @@ clear; clc; close all;
 %% import data ============================================================
 
 % file path
-file1 = 'Gazebo_data_csv/mpc_sin_0926C/imu_data.csv';
-file2 = 'Gazebo_data_csv/mpc_sin_0926C/attitude_r_p_y.csv';
-file3 = 'Gazebo_data_csv/mpc_sin_0926C/actuator_control.csv';
-file4 = 'Gazebo_data_csv/mpc_sin_0926C/input_x_y_z.csv';
-file5 = 'Gazebo_data_csv/mpc_sin_0926C/pose.csv';
+file1 = 'Gazebo_data_csv/mpc_sin_0929D/imu_data.csv';
+file2 = 'Gazebo_data_csv/mpc_sin_0929D/attitude_r_p_y.csv';
+file3 = 'Gazebo_data_csv/mpc_sin_0929D/actuator_control.csv';
+file4 = 'Gazebo_data_csv/mpc_sin_0929D/input_x_y_z.csv';
+file5 = 'Gazebo_data_csv/mpc_sin_0929D/pose.csv';
 
 
 % read (imu_data.csv)
@@ -84,17 +84,19 @@ plot(matrix_input_x_y_z(:,3), 'g.');
 hold off;
 
 figure(4)
-plot(matrix_actuator_control(:,5)-matrix_input_x_y_z(:,5),'r.');
+plot(matrix_actuator_control(:,6)-matrix_input_x_y_z(:,6),'r.');
 
 
-matrix_imu_data = matrix_imu_data(29:end,:);
+matrix_imu_data = matrix_imu_data(30:end,:);
 figure(5); hold on;
 plot(flipud(matrix_input_x_y_z(:,3)), 'r.'); % flipud
 plot(flipud(matrix_imu_data(:,3)), 'g.');
 hold off;
 
 
-% matrix_attitude_r_p_y = matrix_attitude_r_p_y(2:end,:);
+matrix_input_x_y_z = matrix_input_x_y_z(4:end,:);
+matrix_actuator_control = matrix_actuator_control(4:end,:);
+
 figure(6); hold on;
 plot((matrix_input_x_y_z(:,3)), 'r.');
 plot((matrix_attitude_r_p_y(:,3)), 'g.');
@@ -103,15 +105,15 @@ hold off;
 
 Tlen_matrix_input_x_y_z = -matrix_input_x_y_z(1,3)+matrix_input_x_y_z(end,3);
 Nlen_matrix_input_x_y_z = round(Tlen_matrix_input_x_y_z/2e6);
-time = matrix_input_x_y_z(1,3) + (0:Nlen_matrix_input_x_y_z-1)*2e6;
-time = time';
+time = matrix_input_x_y_z(1,3) + (0:Nlen_matrix_input_x_y_z-1)'*2e6;
+
 
 figure(7); hold on;
 plot((time), 'r.');
 plot((matrix_input_x_y_z(:,3)), 'g.');
 hold off;
 
-time = matrix_input_x_y_z(:,3);
+% time = matrix_input_x_y_z(:,3);
 
 
 pose_angle_x = interpolate_to_match_A(time, matrix_attitude_r_p_y(:,[3,4]));
@@ -142,22 +144,22 @@ actuator_control_z = interpolate_to_match_A(time, matrix_input_x_y_z(:,[3,6]));
 
 
 figure(10); hold on;
-plot(actuator_control_x(:,2), 'r.');
-plot(actuator_control_y(:,2), 'g.');
-plot(actuator_control_z(:,2), 'b.');
+plot(actuator_control_x(:,2), 'r');
+plot(actuator_control_y(:,2), 'g');
+plot(actuator_control_z(:,2), 'b');
 hold off;
 
 
 
-data_input_output_07C = [actuator_control_x, actuator_control_y, actuator_control_z, ...
+data_input_output_07D = [actuator_control_x, actuator_control_y, actuator_control_z, ...
                         pose_angle_x, pose_angle_y, pose_angle_z, ...
                         velocity_angle_x, velocity_angle_y, velocity_angle_z];
 
 
-Pstart01 = 15000;
-Pend01 = 25000;
-% data_input_output_07C_1 = data_input_output_07C(Pstart01:Pend01 , :);
-% save('./Gazebo_data_mat/data07C_1.mat', 'data_input_output_07C_1');
+Pstart01 = 1;
+Pend01 = 45001;
+% data_input_output_07D_spline = data_input_output_07D(Pstart01:Pend01 , :);
+% save('./Gazebo_data_mat/data07Dspline.mat', 'data_input_output_07D_spline');
 
 
 
@@ -210,7 +212,7 @@ function interpolated_data = interpolate_to_match_A(A_timestamps, B_data)
     
     % 'linear', 'nearest', 'next', 'previous', 
     % 'pchip', 'cubic', 'v5cubic', 'makima', 'spline'
-    interpolated_values = interp1(B_time, B_values, A_timestamps, 'linear', 'extrap');
+    interpolated_values = interp1(B_time, B_values, A_timestamps, 'spline', 'extrap');
     
     interpolated_data = [A_timestamps, interpolated_values];
 end

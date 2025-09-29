@@ -3,10 +3,10 @@ clear; clc; close all;
 
 %% load data ==============================================================
 % load("Gazebo_data_mat\data02.mat");
-load("Gazebo_data_mat/data07C_1.mat");
+load("Gazebo_data_mat/data07Dspline.mat");
 
 
-data_input_output = data_input_output_07C_1(1:end,:);
+data_input_output = data_input_output_07D_spline(1:end,:);
 
 [nRow, nColumn] = size(data_input_output);
 num_steps = nRow;
@@ -138,7 +138,7 @@ EB = EAEB(:,dim_xiA+1:dim_xiA+dim_xiB);
 
 dataA = bWI0*bWI0';
 dataB = -bXI1*bWI0';
-dataC = bXI1*bXI1' - eye(dim_x)*0.001;
+dataC = bXI1*bXI1' - eye(dim_x)*0.0035;
 
 disp("min eig is " + min(eig(dataA)));
 
@@ -147,7 +147,7 @@ disp("min eig is " + min(eig(dataA)));
 %% solve the controller ===================================================
 
 % set the domain: |x| <= rx
-rx = 0.8; 
+rx = 0.1; 
 
 % XIA
 xiA11 = 1;
@@ -185,14 +185,14 @@ barQ = funcBarQ(xiA11, xiA12, xiA13, ...
 
 
 % solve sdp LMI
-cvx_solver mosek
+cvx_solver sdpt3 %mosek
 cvx_begin sdp % quiet
 
     variable epGa semidefinite;
     variable lyGa(dim_x,dim_x) semidefinite;
     variable kY(dim_u,dim_x);
     
-    minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
+    % minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
 
     subject to   
         for iv = 1:length(barQ)
