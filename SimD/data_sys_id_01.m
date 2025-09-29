@@ -147,7 +147,7 @@ disp("min eig is " + min(eig(dataA)));
 %% solve the controller ===================================================
 
 % set the domain: |x| <= rx
-rx = 0.1; 
+rx = 0.0; 
 
 % XIA
 xiA11 = 1;
@@ -192,7 +192,7 @@ cvx_begin sdp % quiet
     variable lyGa(dim_x,dim_x) semidefinite;
     variable kY(dim_u,dim_x);
     
-    % minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
+    minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
 
     subject to   
         for iv = 1:length(barQ)
@@ -201,8 +201,8 @@ cvx_begin sdp % quiet
                        dataB',       -barQ{iv}*[lyGa;kY],   -dataA ];
             blockS <= 0;
         end
-        epGa >= 1e-12*0;
-        lyGa >= 1e-12* eye(dim_x);
+        epGa >= 1e-4;
+        lyGa >= 1e-1* eye(dim_x);
         
 cvx_end
 
