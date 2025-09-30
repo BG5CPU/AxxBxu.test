@@ -6,7 +6,12 @@ clear; clc; close all;
 load("Gazebo_data_mat/data07Dspline.mat");
 
 
-data_input_output = data_input_output_07D_spline(1:end,:);
+[Len, ~] = size(data_input_output_07D_spline);
+sample_ratio = 10;
+nLen = round(Len/sample_ratio);
+id_new_sample = (3:sample_ratio:sample_ratio*nLen)';
+
+data_input_output = data_input_output_07D_spline(id_new_sample,:);
 
 [nRow, nColumn] = size(data_input_output);
 num_steps = nRow;
@@ -22,7 +27,7 @@ cl_x4 = 14; cl_x5 = 16; cl_x6 = 18;
 
 sample_time_diff = diff(data_input_output(:,cl_time));
 % plot(sample_time, '*');
-h = 2e6/1e9;
+h = (2e6/1e9)*sample_ratio;
 
 
 % quat2eul (Robotics System Toolbox)
@@ -35,7 +40,7 @@ x_exp = data_input_output(:,[cl_x1, cl_x2, cl_x3, cl_x4, cl_x5, cl_x6])';
 u_exp = data_input_output(:,[cl_u1, cl_u2, cl_u3])';
 
 
-% x_exp(:,[2,3]) = -x_exp(:,[2,3]);
+x_exp(:,[2,3]) = -x_exp(:,[2,3]);
 
 
 
@@ -138,7 +143,7 @@ EB = EAEB(:,dim_xiA+1:dim_xiA+dim_xiB);
 
 dataA = bWI0*bWI0';
 dataB = -bXI1*bWI0';
-dataC = bXI1*bXI1' - eye(dim_x)*0.0035;
+dataC = bXI1*bXI1' - eye(dim_x)*0.004;
 
 disp("min eig is " + min(eig(dataA)));
 
@@ -201,7 +206,7 @@ cvx_begin sdp % quiet
                        dataB',       -barQ{iv}*[lyGa;kY],   -dataA ];
             blockS <= 0;
         end
-        epGa >= 1e-4;
+        epGa >= 1e-3;
         lyGa >= 1e-1* eye(dim_x);
         
 cvx_end
