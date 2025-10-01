@@ -3,15 +3,15 @@ clear; clc; close all;
 
 %% load data ==============================================================
 % load("Gazebo_data_mat\data02.mat");
-load("Gazebo_data_mat/data07Dspline.mat");
+load("Gazebo_data_mat/data08A.mat");
 
 
-[Len, ~] = size(data_input_output_07D_spline);
-sample_ratio = 10;
-nLen = round(Len/sample_ratio);
-id_new_sample = (3:sample_ratio:sample_ratio*nLen)';
+% [Len, ~] = size(data_input_output_07D_spline);
+sample_ratio = 1;
+% nLen = round(Len/sample_ratio);
+% id_new_sample = (3:sample_ratio:sample_ratio*nLen)';
 
-data_input_output = data_input_output_07D_spline(id_new_sample,:);
+data_input_output = data_input_output_08A(1:end,:);
 
 [nRow, nColumn] = size(data_input_output);
 num_steps = nRow;
@@ -40,7 +40,7 @@ x_exp = data_input_output(:,[cl_x1, cl_x2, cl_x3, cl_x4, cl_x5, cl_x6])';
 u_exp = data_input_output(:,[cl_u1, cl_u2, cl_u3])';
 
 
-x_exp(:,[2,3]) = -x_exp(:,[2,3]);
+% x_exp(:,[2,3]) = -x_exp(:,[2,3]);
 
 
 
@@ -143,7 +143,7 @@ EB = EAEB(:,dim_xiA+1:dim_xiA+dim_xiB);
 
 dataA = bWI0*bWI0';
 dataB = -bXI1*bWI0';
-dataC = bXI1*bXI1' - eye(dim_x)*0.004;
+dataC = bXI1*bXI1' - eye(dim_x)*0.01;
 
 disp("min eig is " + min(eig(dataA)));
 
@@ -152,7 +152,7 @@ disp("min eig is " + min(eig(dataA)));
 %% solve the controller ===================================================
 
 % set the domain: |x| <= rx
-rx = 0.0; 
+rx = 0.1; 
 
 % XIA
 xiA11 = 1;
@@ -189,8 +189,8 @@ barQ = funcBarQ(xiA11, xiA12, xiA13, ...
                 xiB11, xiB12, xiB13);
 
 
-% solve sdp LMI
-cvx_solver sdpt3 %mosek
+% solve sdp LMI 
+cvx_solver mosek  % sdpt3
 cvx_begin sdp % quiet
 
     variable epGa semidefinite;
