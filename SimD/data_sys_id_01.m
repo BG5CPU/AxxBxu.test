@@ -3,7 +3,7 @@ clear; clc; close all;
 
 %% load data ==============================================================
 % load("Gazebo_data_mat\data02.mat");
-load("Gazebo_data_mat/data08A.mat");
+load("Gazebo_data_mat/data04.mat");
 
 
 % [Len, ~] = size(data_input_output_07D_spline);
@@ -11,7 +11,7 @@ sample_ratio = 1;
 % nLen = round(Len/sample_ratio);
 % id_new_sample = (3:sample_ratio:sample_ratio*nLen)';
 
-data_input_output = data_input_output_08A(1:end,:);
+data_input_output = data_input_output_04(1:end,:);
 
 [nRow, nColumn] = size(data_input_output);
 num_steps = nRow;
@@ -143,7 +143,7 @@ EB = EAEB(:,dim_xiA+1:dim_xiA+dim_xiB);
 
 dataA = bWI0*bWI0';
 dataB = -bXI1*bWI0';
-dataC = bXI1*bXI1' - eye(dim_x)*0.01;
+dataC = bXI1*bXI1' - eye(dim_x)*0.001;
 
 disp("min eig is " + min(eig(dataA)));
 
@@ -197,7 +197,8 @@ cvx_begin sdp % quiet
     variable lyGa(dim_x,dim_x) semidefinite;
     variable kY(dim_u,dim_x);
     
-    minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
+    % minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
+    minimize( 1.0*lambda_max(lyGa) - 0.0*lambda_min(lyGa) - 0.0*epGa + 0.0*trace(lyGa) );
 
     subject to   
         for iv = 1:length(barQ)
@@ -206,8 +207,8 @@ cvx_begin sdp % quiet
                        dataB',       -barQ{iv}*[lyGa;kY],   -dataA ];
             blockS <= 0;
         end
-        epGa >= 1e-3;
-        lyGa >= 1e-1* eye(dim_x);
+        epGa >= 1e-12;
+        lyGa >= 0.90 * eye(dim_x);
         
 cvx_end
 
