@@ -3,11 +3,11 @@ clear; clc; close all;
 %% import data ============================================================
 
 % file path
-file1 = 'Gazebo_data_csv/mpc_sin/imu_data.csv';
-file2 = 'Gazebo_data_csv/mpc_sin/attitude_r_p_y.csv';
-file3 = 'Gazebo_data_csv/mpc_sin/actuator_control.csv';
-file4 = 'Gazebo_data_csv/mpc_sin/input_x_y_z.csv';
-file5 = 'Gazebo_data_csv/mpc_sin/pose.csv';
+file1 = 'Gazebo_data_csv/sim_mpc_sin_exp_collection/imu_data.csv';
+file2 = 'Gazebo_data_csv/sim_mpc_sin_exp_collection/attitude_r_p_y.csv';
+file3 = 'Gazebo_data_csv/sim_mpc_sin_exp_collection/actuator_control.csv';
+file4 = 'Gazebo_data_csv/sim_mpc_sin_exp_collection/input_x_y_z.csv';
+file5 = 'Gazebo_data_csv/sim_mpc_sin_exp_collection/pose.csv';
 
 
 % read (imu_data.csv)
@@ -55,7 +55,7 @@ matrix_pose = table2array(pose);
 check_data_continuity(matrix_pose(:,2), 'matrix_pose');
 
 
-% time difference
+%% time difference ========================================================
 
 [~, idx] = unique(matrix_actuator_control(:,3), 'stable');   % indices of first occurrence
 matrix_actuator_control = matrix_actuator_control(idx, :);
@@ -63,13 +63,13 @@ matrix_actuator_control = matrix_actuator_control(3:end,:);
 
 matrix_input_x_y_z([4539,12405],:) = [];
 
-figure(1)
-plot(matrix_actuator_control(:,3), 'o');
-hold on;
-plot(matrix_input_x_y_z(:,3), '*');
+% figure(1)
+% plot(matrix_actuator_control(:,3), 'o');
+% hold on;
+% plot(matrix_input_x_y_z(:,3), '*');
 
-figure(2)
-plot(matrix_actuator_control(:,6) - matrix_input_x_y_z(:,6));
+% % figure(2)
+% % plot(matrix_actuator_control(:,6) - matrix_input_x_y_z(:,6));
 
 
 
@@ -77,22 +77,22 @@ matrix_attitude_r_p_y = matrix_attitude_r_p_y(3:end,:);
 
 matrix_attitude_r_p_y([4539,12405],:) = [];
 
-figure(3)
-plot(matrix_actuator_control(:,3), 'o');
-hold on;
-plot(matrix_attitude_r_p_y(:,3), '*');
+% figure(3)
+% plot(matrix_actuator_control(:,3), 'o');
+% hold on;
+% plot(matrix_attitude_r_p_y(:,3), '*');
 
-figure(4)
-plot(matrix_actuator_control(:,3) - matrix_attitude_r_p_y(:,3));
+% figure(4)
+% plot(matrix_actuator_control(:,3) - matrix_attitude_r_p_y(:,3));
 
 
-figure(11)
-subplot(3,1,1)
-plot(diff(matrix_input_x_y_z(:,3)), '*');
-subplot(3,1,2)
-plot(diff(matrix_actuator_control(:,3)), '*');
-subplot(3,1,3)
-plot(diff(matrix_attitude_r_p_y(:,3)), '*');
+% figure(11)
+% subplot(3,1,1)
+% plot(diff(matrix_input_x_y_z(:,3)), '*');
+% subplot(3,1,2)
+% plot(diff(matrix_actuator_control(:,3)), '*');
+% subplot(3,1,3)
+% plot(diff(matrix_attitude_r_p_y(:,3)), '*');
 
 
 
@@ -100,12 +100,11 @@ plot(diff(matrix_attitude_r_p_y(:,3)), '*');
 
 matrix_imu_data = matrix_imu_data(55:end,:);
 diff_imu = diff(matrix_imu_data(:,1));
-figure(5)
-plot(diff_imu, '*');
+
+% figure(5)
+% plot(diff_imu, '*');
+
 matrix_imu_data(3155,:) = [];
-
-
-
 
 
 
@@ -122,6 +121,26 @@ actuator_control_y = matrix_input_x_y_z(:,[1,5]);
 actuator_control_z = matrix_input_x_y_z(:,[1,6]);
 
 
+% figure(16); hold on;
+% plot(actuator_control_x(:,2), 'r');
+% plot(actuator_control_y(:,2), 'g');
+% plot(actuator_control_z(:,2), 'b');
+% hold off;
+% 
+% figure(17); hold on;
+% plot(pose_angle_x(:,2), 'r');
+% plot(pose_angle_y(:,2), 'g');
+% plot(pose_angle_z(:,2), 'b');
+% hold off;
+% 
+% figure(18); hold on;
+% plot(velocity_angle_x(:,2), 'r');
+% plot(velocity_angle_y(:,2), 'g');
+% plot(velocity_angle_z(:,2), 'b');
+% hold off;
+
+
+
 data_input_output_04 = [actuator_control_x, actuator_control_y, actuator_control_z, ...
                         pose_angle_x, pose_angle_y, pose_angle_z, ...
                         velocity_angle_x, velocity_angle_y, velocity_angle_z];
@@ -130,7 +149,50 @@ data_input_output_04 = [actuator_control_x, actuator_control_y, actuator_control
 Pstart01 = 10;
 Pend01 = 13410;
 data_input_output_04 = data_input_output_04(Pstart01:Pend01 , :);
-save('./Gazebo_data_mat/data04.mat', 'data_input_output_04');
+% save('./Gazebo_data_mat/data_exp_04.mat', 'data_input_output_04');
+
+
+down = 10;
+
+time = matrix_actuator_control(:,3);
+time = (time-time(1))/1e9;
+
+time = downsample_matrix(time, down);
+
+actuator_control_x = downsample_matrix(actuator_control_x, down);
+actuator_control_y = downsample_matrix(actuator_control_y, down);
+actuator_control_z = downsample_matrix(actuator_control_z, down);
+pose_angle_x = downsample_matrix(pose_angle_x, down);
+pose_angle_y = downsample_matrix(pose_angle_y, down);
+pose_angle_z = downsample_matrix(pose_angle_z, down);
+velocity_angle_x = downsample_matrix(velocity_angle_x, down);
+velocity_angle_y = downsample_matrix(velocity_angle_y, down);
+velocity_angle_z = downsample_matrix(velocity_angle_z, down);
+
+subplot(3,1,1)
+hold on;
+plot(time, actuator_control_x(:,2), 'r');
+plot(time, actuator_control_y(:,2), 'g');
+plot(time, actuator_control_z(:,2), 'b');
+hold off;
+
+subplot(3,1,2)
+hold on;
+plot(time, pose_angle_x(:,2), 'r');
+plot(time, pose_angle_y(:,2), 'g');
+plot(time, pose_angle_z(:,2), 'b');
+hold off;
+
+subplot(3,1,3)
+hold on;
+plot(time, velocity_angle_x(:,2), 'r');
+plot(time, velocity_angle_y(:,2), 'g');
+plot(time, velocity_angle_z(:,2), 'b');
+hold off;
+
+
+
+
 
 
 
@@ -185,4 +247,12 @@ function interpolated_data = interpolate_to_match_A(A_timestamps, B_data)
     interpolated_values = interp1(B_time, B_values, A_timestamps, 'spline', 'extrap');
     
     interpolated_data = [A_timestamps, interpolated_values];
+end
+
+
+function Y = downsample_matrix(X,d)
+% DOWNSAMPLE_MATRIX  Downsample matrix X along rows
+    [N,~] = size(X);
+    N_valid = floor(N/d) * d;
+    Y = X(1:d:N_valid, :);
 end

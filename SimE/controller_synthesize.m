@@ -3,13 +3,11 @@ clear; clc; close all;
 
 %% load data ==============================================================
 % load("Gazebo_data_mat\data02.mat");
-load("Gazebo_data_mat/data04.mat");
+load("Gazebo_data_mat/data_exp_04.mat");
 
 
-% [Len, ~] = size(data_input_output_07D_spline);
+
 sample_ratio = 1;
-% nLen = round(Len/sample_ratio);
-% id_new_sample = (3:sample_ratio:sample_ratio*nLen)';
 
 data_input_output = data_input_output_04(1:end,:);
 
@@ -198,7 +196,7 @@ cvx_begin sdp % quiet
     variable kY(dim_u,dim_x);
     
     % minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
-    minimize( 1.0*lambda_max(lyGa) - 0.0*lambda_min(lyGa) - 0.0*epGa + 0.0*trace(lyGa) );
+    % minimize( 1.0*lambda_max(lyGa) - 0.0*lambda_min(lyGa) - 0.0*epGa + 0.0*trace(lyGa) );
 
     subject to   
         for iv = 1:length(barQ)
