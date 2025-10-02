@@ -169,12 +169,23 @@ velocity_angle_x = downsample_matrix(velocity_angle_x, down);
 velocity_angle_y = downsample_matrix(velocity_angle_y, down);
 velocity_angle_z = downsample_matrix(velocity_angle_z, down);
 
+
+figure('color', [1 1 1]);
+set(gcf, 'Position', [200, 200, 800, 400]);
+
 subplot(3,1,1)
 hold on;
 plot(time, actuator_control_x(:,2), 'r');
 plot(time, actuator_control_y(:,2), 'g');
 plot(time, actuator_control_z(:,2), 'b');
 hold off;
+set(gca,'fontsize',10,'fontname','Times');
+legend('$u_1$', '$u_2$', '$u_3$',...
+       'Fontname', 'Times New Roman','Interpreter', 'latex','FontSize', 11);
+ylabel('input', 'Fontname', 'Times New Roman', 'FontSize', 11);
+set(gca,'Position',[0.07 0.74 0.92 0.24]);
+xlim([0, max(time)]);
+
 
 subplot(3,1,2)
 hold on;
@@ -182,6 +193,13 @@ plot(time, pose_angle_x(:,2), 'r');
 plot(time, pose_angle_y(:,2), 'g');
 plot(time, pose_angle_z(:,2), 'b');
 hold off;
+set(gca,'fontsize',10,'fontname','Times');
+legend('$\phi$', '$\theta$', '$\psi$', ...
+       'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 11);
+ylabel('Euler angles [rad]', 'Fontname', 'Times New Roman', 'FontSize', 11);
+set(gca,'Position',[0.07 0.42 0.92 0.24]);
+xlim([0, max(time)]);
+
 
 subplot(3,1,3)
 hold on;
@@ -189,6 +207,15 @@ plot(time, velocity_angle_x(:,2), 'r');
 plot(time, velocity_angle_y(:,2), 'g');
 plot(time, velocity_angle_z(:,2), 'b');
 hold off;
+set(gca,'fontsize',10,'fontname','Times');
+legend('$\omega_1$', '$\omega_2$', '$\omega_3$', ...
+       'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 11);
+xlabel('time [s]', 'Fontname', 'Times New Roman', 'FontSize', 11);
+ylabel('angular vel. [rad/s]', 'Fontname', 'Times New Roman', 'FontSize', 11);
+set(gca,'Position',[0.07 0.10 0.92 0.24]);
+xlim([0, max(time)]);
+
+
 
 
 

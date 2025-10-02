@@ -23,8 +23,8 @@ check_data_continuity(matrix_imu_data(:,2), 'matrix_imu_data');
 opts = detectImportOptions(file2);
 opts.SelectedVariableNames = [1,2,3, 5,6,7]; 
 opts.VariableNamingRule = 'preserve';
-attitude_r_p_y = readtable(file2, opts);
-matrix_attitude_r_p_y = table2array(attitude_r_p_y); 
+pose_angle = readtable(file2, opts);
+matrix_attitude_r_p_y = table2array(pose_angle); 
 check_data_continuity(matrix_attitude_r_p_y(:,2), 'matrix_attitude_r_p_y');
 
 
@@ -59,27 +59,49 @@ check_data_continuity(matrix_pose(:,2), 'matrix_pose');
 
 %% plot data ==============================================================
 
-time = matrix_attitude_r_p_y(:,1);
-time = (time-time(1))/1e9;
+matrix_attitude_r_p_y = matrix_attitude_r_p_y(1:round(length(matrix_attitude_r_p_y)/2),:);
+matrix_imu_data = matrix_imu_data(1:round(length(matrix_attitude_r_p_y)/2),:);
 
-attitude_r_p_y = matrix_attitude_r_p_y(:,[4,5,6]);
-attitude_r_p_y = rad2deg(attitude_r_p_y);
+time_pose = matrix_attitude_r_p_y(:,1);
+time_pose = (time_pose-time_pose(1))/1e9;
+time_velo = matrix_imu_data(:,1);
+time_velo = (time_velo-time_velo(1))/1e9;
 
-down = 20;
-time = downsample_matrix(time, down);
-attitude_r_p_y = downsample_matrix(attitude_r_p_y, down);
 
-figure(1); hold on;
-plot(time, attitude_r_p_y(:,1), 'r');
-plot(time, attitude_r_p_y(:,2), 'g');
-plot(time, attitude_r_p_y(:,3), 'b');
+pose_angle = matrix_attitude_r_p_y(:,[4,5,6]);
+velocity_angle = matrix_imu_data(:,[8,9,10]);
+
+down1 = 20;
+time_pose = downsample_matrix(time_pose, down1);
+pose_angle = downsample_matrix(pose_angle, down1);
+
+down2 = 10;
+time_velo = downsample_matrix(time_velo, down2);
+velocity_angle = downsample_matrix(velocity_angle, down2);
+
+figure('color', [1 1 1]);
+set(gcf, 'Position', [200, 200, 800, 300]);
+
+subplot(2,1,1)
+hold on;
+plot(time_pose, pose_angle(:,1), 'r', 'LineWidth', 1.5);
+plot(time_pose, pose_angle(:,2), 'g', 'LineWidth', 1.5);
+plot(time_pose, pose_angle(:,3), 'b', 'LineWidth', 1.5);
 hold off;
-% ylim([-10 10]);
+grid on;
+xlim([0 max(time_pose)]);
+set(gca,'fontsize',10,'fontname','Times');
 
 
-
-
-
+subplot(2,1,2)
+hold on;
+plot(time_velo, velocity_angle(:,1), 'r.');
+plot(time_velo, velocity_angle(:,2), 'g.');
+plot(time_velo, velocity_angle(:,3), 'b.');
+hold off;
+grid on;
+xlim([0 max(time_velo)]);
+set(gca,'fontsize',10,'fontname','Times');
 
 
 
