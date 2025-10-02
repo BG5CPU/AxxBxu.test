@@ -141,7 +141,7 @@ EB = EAEB(:,dim_xiA+1:dim_xiA+dim_xiB);
 
 dataA = bWI0*bWI0';
 dataB = -bXI1*bWI0';
-dataC = bXI1*bXI1' - eye(dim_x)*0.001;
+dataC = bXI1*bXI1' - eye(dim_x)*0.003;
 
 disp("min eig is " + min(eig(dataA)));
 
