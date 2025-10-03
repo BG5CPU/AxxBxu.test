@@ -144,7 +144,7 @@ end
 % Plot first 3 curves in Figure 1
 figure(1); hold on;            
 for i = 1:3        
-    plot(t_exp', x_exp(i, :), 'LineWidth', 1.5);
+    plot(t_exp', x_exp(i, :), 'LineWidth', 0.5);
 end
 hold off;           % Release figure hold
 legend('Curve 1', 'Curve 2', 'Curve 3');
@@ -153,7 +153,7 @@ grid on;
 % Plot last 3 curves in Figure 2
 figure(2); hold on;            
 for i = 4:6         
-    plot(t_exp', x_exp(i, :), 'LineWidth', 1.5);
+    plot(t_exp', x_exp(i, :), 'LineWidth', 0.5);
 end
 hold off;           % Release figure hold
 legend('Curve 4', 'Curve 5', 'Curve 6');
@@ -221,6 +221,7 @@ barQ = funcBarQ(xiA11, xiA12, xiA13, ...
 
 
 % solve sdp LMI
+cvx_solver mosek  % sdpt3
 cvx_begin sdp % quiet
     variable epGa semidefinite;
     variable lyGa(dim_x,dim_x) semidefinite;
