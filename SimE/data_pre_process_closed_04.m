@@ -3,11 +3,11 @@ clear; clc; close all;
 %% import data ============================================================
 
 % file path
-file1 = 'Gazebo_data_csv/sim_mpc_to_vK_1001B/imu_data.csv';
-file2 = 'Gazebo_data_csv/sim_mpc_to_vK_1001B/attitude_r_p_y.csv';
-file3 = 'Gazebo_data_csv/sim_mpc_to_vK_1001B/actuator_control.csv';
-file4 = 'Gazebo_data_csv/sim_mpc_to_vK_1001B/input_x_y_z.csv';
-file5 = 'Gazebo_data_csv/sim_mpc_to_vK_1001B/pose.csv';
+file1 = 'Gazebo_data_csv/sim_bad_controller_to_vK_closed_1002/imu_data.csv';
+file2 = 'Gazebo_data_csv/sim_bad_controller_to_vK_closed_1002/attitude_r_p_y.csv';
+file3 = 'Gazebo_data_csv/sim_bad_controller_to_vK_closed_1002/actuator_control.csv';
+file4 = 'Gazebo_data_csv/sim_bad_controller_to_vK_closed_1002/input_x_y_z.csv';
+file5 = 'Gazebo_data_csv/sim_bad_controller_to_vK_closed_1002/pose.csv';
 
 
 % read (imu_data.csv)
@@ -57,51 +57,99 @@ check_data_continuity(matrix_pose(:,2), 'matrix_pose');
 
 
 
-%% plot data ==============================================================
 
-matrix_attitude_r_p_y = matrix_attitude_r_p_y(1:round(length(matrix_attitude_r_p_y)/2),:);
-matrix_imu_data = matrix_imu_data(1:round(length(matrix_attitude_r_p_y)/2),:);
+%% data alignment =========================================================
 
-time_pose = matrix_attitude_r_p_y(:,1);
-time_pose = (time_pose-time_pose(1))/1e9;
-time_velo = matrix_imu_data(:,1);
-time_velo = (time_velo-time_velo(1))/1e9;
+[~, idx_matrix_attitude_r_p_y_1] = unique(matrix_attitude_r_p_y(:,1), 'stable');
+[~, idx_matrix_attitude_r_p_y_3] = unique(matrix_attitude_r_p_y(:,3), 'stable');
 
+matrix_attitude_r_p_y = matrix_attitude_r_p_y(idx_matrix_attitude_r_p_y_3, :);
+
+
+
+matrix_imu_data = matrix_imu_data(17:end,:);
+
+% figure(1); hold on;
+% plot(flipud(matrix_imu_data(:,1)), 'r.'); % flipud
+% plot(flipud(matrix_attitude_r_p_y(:,3)), 'g.');
+% hold off;
+
+time = matrix_attitude_r_p_y(:,3);
+
+velocity_angle_x = interpolate_to_match_A(time, matrix_imu_data(:,[1,8]));
+velocity_angle_y = interpolate_to_match_A(time, matrix_imu_data(:,[1,9]));
+velocity_angle_z = interpolate_to_match_A(time, matrix_imu_data(:,[1,10]));
+
+velocity_angle = [velocity_angle_x(:,2), velocity_angle_y(:,2), velocity_angle_z(:,2)];
 
 pose_angle = matrix_attitude_r_p_y(:,[4,5,6]);
-velocity_angle = matrix_imu_data(:,[8,9,10]);
 
-down1 = 20;
-time_pose = downsample_matrix(time_pose, down1);
-pose_angle = downsample_matrix(pose_angle, down1);
 
-down2 = 10;
-time_velo = downsample_matrix(time_velo, down2);
-velocity_angle = downsample_matrix(velocity_angle, down2);
+
+
+
+%% plot data ==============================================================
+
+time = (time-time(1))/1e9;
+
+
+
+
+
+
+
 
 figure('color', [1 1 1]);
-set(gcf, 'Position', [200, 200, 800, 300]);
+set(gcf, 'Position', [200, 200, 500, 300]);
 
-subplot(2,1,1)
-hold on;
-plot(time_pose, pose_angle(:,1), 'r', 'LineWidth', 1.5);
-plot(time_pose, pose_angle(:,2), 'g', 'LineWidth', 1.5);
-plot(time_pose, pose_angle(:,3), 'b', 'LineWidth', 1.5);
-hold off;
+subplot(2,3,1)
+plot(time, pose_angle(:,1));
 grid on;
-xlim([0 max(time_pose)]);
+xlim([0 max(time)]);
+ylim([-0.05 0.05]);
 set(gca,'fontsize',10,'fontname','Times');
 
 
-subplot(2,1,2)
-hold on;
-plot(time_velo, velocity_angle(:,1), 'r.');
-plot(time_velo, velocity_angle(:,2), 'g.');
-plot(time_velo, velocity_angle(:,3), 'b.');
-hold off;
+subplot(2,3,2)
+plot(time, pose_angle(:,2));
 grid on;
-xlim([0 max(time_velo)]);
+xlim([0 max(time)]);
+ylim([-0.05 0.05]);
 set(gca,'fontsize',10,'fontname','Times');
+
+
+subplot(2,3,3)
+plot(time, pose_angle(:,3));
+grid on;
+xlim([0 max(time)]);
+ylim([-0.05 0.05]);
+set(gca,'fontsize',10,'fontname','Times');
+
+
+
+subplot(2,3,4)
+plot(time, velocity_angle(:,1));
+grid on;
+xlim([0 max(time)]);
+ylim([-0.3 0.3]);
+set(gca,'fontsize',10,'fontname','Times');
+
+
+subplot(2,3,5)
+plot(time, velocity_angle(:,2));
+grid on;
+xlim([0 max(time)]);
+ylim([-0.3 0.3]);
+set(gca,'fontsize',10,'fontname','Times');
+
+
+subplot(2,3,6)
+plot(time, velocity_angle(:,3));
+grid on;
+xlim([0 max(time)]);
+ylim([-0.3 0.3]);
+set(gca,'fontsize',10,'fontname','Times');
+
 
 
 
@@ -138,6 +186,32 @@ function check_data_continuity(data_matrix_column, matrix_name)
     end
     
     fprintf('\n');
+end
+
+
+function interpolated_data = interpolate_to_match_A(A_timestamps, B_data)
+   
+    B_time = B_data(:, 1);
+    B_values = B_data(:, 2);
+    
+    if any(diff(B_time) <= 0)
+        error('B matrix timestamp must be strictly incremented');
+    end
+    
+    if any(diff(A_timestamps) <= 0)
+        error('A matrix timestamp must be strictly incremented');
+    end
+    
+
+    if min(A_timestamps) < min(B_time) && max(A_timestamps) > max(B_time)
+        disp('timestamp of A exceeds B, and extrapolation should be used');
+    end
+    
+    % 'linear', 'nearest', 'next', 'previous', 
+    % 'pchip', 'cubic', 'v5cubic', 'makima', 'spline'
+    interpolated_values = interp1(B_time, B_values, A_timestamps, 'linear', 'extrap');
+    
+    interpolated_data = [A_timestamps, interpolated_values];
 end
 
 
