@@ -361,7 +361,7 @@ set(gcf, 'Position', [300, 300, 450, 350]);
 subplot(2,1,1); % 2 rows, 1 column, 1st subplot
 hold on;
 for i = 1:3
-    plot(t_imp', x_imp(i,:), 'LineWidth', 0.5);
+    plot(t_imp', x_imp(i,:), 'LineWidth', 1.0);
 end
 hold off;
 legend('$\phi$', '$\theta$', '$\psi$', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 12);
@@ -375,7 +375,7 @@ set(gca,'position',[0.13 0.63 0.84 0.32]);
 subplot(2,1,2); % 2 rows, 1 column, 2nd subplot
 hold on;
 for i = 4:6
-    plot(t_imp', x_imp(i,:), 'LineWidth', 0.5);
+    plot(t_imp', x_imp(i,:), 'LineWidth', 1.5);
 end
 hold off;
 legend('$\omega_1$', '$\omega_2$', '$\omega_3$', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 12);
