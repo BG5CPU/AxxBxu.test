@@ -2,6 +2,8 @@
 clear; close all; clc;
 rng(5);
 
+
+
 %% system settings ========================================================
 % Time step [s]
 h = 0.002;  
@@ -250,6 +252,7 @@ barQ = funcBarQ(xiA11, xiA12, xiA13, ...
 
 
 % solve sdp LMI
+cvx_solver mosek  % sdpt3
 cvx_begin sdp % quiet
     variable epGa semidefinite;
     variable lyGa(dim_x,dim_x) semidefinite;
@@ -282,7 +285,7 @@ roa  = min( 1, roac ) * rx;
 disp("radius of ROA is " + roa);
 
 
-
+load("Mdata/QuadrotorDataTorqueDis13paper01.mat");
 
 
 
@@ -292,7 +295,7 @@ disp("radius of ROA is " + roa);
 state0_imp = [0.1 0.1 0.1 -0.1 -0.1 -0.1]';
 tspan_imp = [0 20];
 
-% Torque function that, state feedback
+% Torque function, state feedback
 tau_fk = @(t,state) vK*state;
 [t_imp, x_imp] = discrete_attitude_equation(Jinertia, state0_imp, tau_fk, 0, h, tspan_imp);
 x_imp = x_imp';
@@ -327,6 +330,66 @@ ylabel('angular velocity [rad/s]', 'Fontname', 'Times New Roman', 'FontSize', 11
 set(gca,'fontsize',11,'fontname','Times');
 grid on;
 set(gca,'position',[0.13 0.15 0.84 0.32]);
+
+
+
+
+
+%% controller implementation with disturbance =============================
+
+
+tspan_imp = [0 100];
+timesp_imp = tspan_imp(1):h:tspan_imp(2);
+num_steps_imp = length(timesp_imp);
+
+
+% disturbance energy
+ew = 0.0002; 
+% disturbance sequence
+w_imp = 2*ew*rand(dim_x, num_steps_imp-1) - ew;
+% w_imp(1:3,:) = 0;
+% disturbance function that steps through pre-generated values
+w_f = @(t,state) w_imp(:, round(t/h)+1);
+
+[t_imp, x_imp] = discrete_attitude_equation(Jinertia, state0_imp, tau_fk, w_f, h, tspan_imp);
+x_imp = x_imp';
+
+
+figure('color', [1 1 1]);
+set(gcf, 'Position', [300, 300, 450, 350]);
+
+subplot(2,1,1); % 2 rows, 1 column, 1st subplot
+hold on;
+for i = 1:3
+    plot(t_imp', x_imp(i,:), 'LineWidth', 0.5);
+end
+hold off;
+legend('$\phi$', '$\theta$', '$\psi$', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 12);
+xlabel('time [s]', 'Fontname', 'Times New Roman', 'FontSize', 11);
+ylabel('Euler angles [rad]', 'Fontname', 'Times New Roman', 'FontSize', 11);
+set(gca,'fontsize',11,'fontname','Times');
+grid on;
+set(gca,'position',[0.13 0.63 0.84 0.32]);
+
+% Bottom subplot - last 3 curves
+subplot(2,1,2); % 2 rows, 1 column, 2nd subplot
+hold on;
+for i = 4:6
+    plot(t_imp', x_imp(i,:), 'LineWidth', 0.5);
+end
+hold off;
+legend('$\omega_1$', '$\omega_2$', '$\omega_3$', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 12);
+xlabel('time [s]', 'Fontname', 'Times New Roman', 'FontSize', 11);
+ylabel('angular velocity [rad/s]', 'Fontname', 'Times New Roman', 'FontSize', 11);
+set(gca,'fontsize',11,'fontname','Times');
+grid on;
+set(gca,'position',[0.13 0.15 0.84 0.32]);
+
+
+
+
+
+
 
 
 
