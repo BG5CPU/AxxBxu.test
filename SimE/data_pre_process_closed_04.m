@@ -84,71 +84,103 @@ velocity_angle = [velocity_angle_x(:,2), velocity_angle_y(:,2), velocity_angle_z
 
 pose_angle = matrix_attitude_r_p_y(:,[4,5,6]);
 
+time = (time-time(1))/1e9;
 
+downs = 20;
+
+time = downsample_matrix(time, downs);
+pose_angle = downsample_matrix(pose_angle, downs);
+velocity_angle = downsample_matrix(velocity_angle, downs);
 
 
 
 %% plot data ==============================================================
 
-time = (time-time(1))/1e9;
 
 
-
-
-
-
+lm=0.095; rm=0.025; bm=0.13; tm=0.04; hs=0.065; vs=0.08;
+w=(1-lm-rm-2*hs)/3;
+h=(1-tm-bm-vs)/2;
 
 
 figure('color', [1 1 1]);
-set(gcf, 'Position', [200, 200, 500, 300]);
+set(gcf, 'Position', [200, 200, 600, 300]);
 
 subplot(2,3,1)
-plot(time, pose_angle(:,1));
+plot(time, pose_angle(:,1), 'k', 'LineWidth', 1.5);
 grid on;
-xlim([0 max(time)]);
+xlim([0 100]);
 ylim([-0.05 0.05]);
 set(gca,'fontsize',10,'fontname','Times');
+legend('$\phi$', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 10);
+% xlabel('time [s]', 'Fontname', 'Times New Roman', 'FontSize', 10);
+% ylabel('$\phi$  [rad]', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 10);
+ylabel('[rad]', 'Fontname', 'Times New Roman', 'FontSize', 10);
+set(gca,'Position',[lm, bm+h+vs, w, h]);
 
 
 subplot(2,3,2)
-plot(time, pose_angle(:,2));
+plot(time, pose_angle(:,2), 'k', 'LineWidth', 1.5);
 grid on;
-xlim([0 max(time)]);
+xlim([0 100]);
 ylim([-0.05 0.05]);
 set(gca,'fontsize',10,'fontname','Times');
+legend('$\theta$', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 10);
+% xlabel('time [s]', 'Fontname', 'Times New Roman', 'FontSize', 10);
+% ylabel('$\theta$  [rad]', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 10);
+set(gca,'Position',[lm+w+hs, bm+h+vs, w, h]);
 
 
 subplot(2,3,3)
-plot(time, pose_angle(:,3));
+plot(time, pose_angle(:,3), 'k', 'LineWidth', 1.5);
 grid on;
-xlim([0 max(time)]);
+xlim([0 100]);
 ylim([-0.05 0.05]);
 set(gca,'fontsize',10,'fontname','Times');
+legend('$\psi$', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 10);
+% xlabel('time [s]', 'Fontname', 'Times New Roman', 'FontSize', 10);
+% ylabel('$\psi$  [rad]', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 10);
+set(gca,'Position',[lm+2*(w+hs), bm+h+vs, w, h]);
+
 
 
 
 subplot(2,3,4)
-plot(time, velocity_angle(:,1));
+plot(time, velocity_angle(:,1), 'k', 'LineWidth', 0.5);
 grid on;
-xlim([0 max(time)]);
+xlim([0 100]);
 ylim([-0.3 0.3]);
 set(gca,'fontsize',10,'fontname','Times');
+legend('$\omega_1$', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 10);
+xlabel('time [s]', 'Fontname', 'Times New Roman', 'FontSize', 10);
+ylabel('[rad/s]', 'Fontname', 'Times New Roman', 'FontSize', 10);
+set(gca,'Position',[lm, bm, w, h]);
 
 
 subplot(2,3,5)
-plot(time, velocity_angle(:,2));
+plot(time, velocity_angle(:,2), 'k', 'LineWidth', 0.5);
 grid on;
-xlim([0 max(time)]);
+xlim([0 100]);
 ylim([-0.3 0.3]);
 set(gca,'fontsize',10,'fontname','Times');
+legend('$\omega_2$', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 10);
+xlabel('time [s]', 'Fontname', 'Times New Roman', 'FontSize', 10);
+set(gca,'Position',[lm+w+hs, bm, w, h]);
 
 
 subplot(2,3,6)
-plot(time, velocity_angle(:,3));
+plot(time, velocity_angle(:,3), 'k', 'LineWidth', 0.5);
 grid on;
-xlim([0 max(time)]);
+xlim([0 100]);
 ylim([-0.3 0.3]);
 set(gca,'fontsize',10,'fontname','Times');
+legend('$\omega_3$', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 10);
+xlabel('time [s]', 'Fontname', 'Times New Roman', 'FontSize', 10);
+set(gca,'Position',[lm+2*(w+hs), bm, w, h]);
+
+
+
+
 
 
 
