@@ -17,7 +17,7 @@ It is workspace for controller synthesis for system $x^{+} = A(x)x + B(x)u$.
 `SimE` is for **Section V-B** in the paper. 
 It includes Gazebo simulation and physical experiment.  
 
-The size of `ros.bag` is too big. It is available [here](https://nusu-my.sharepoint.com/:f:/g/personal/li_ld_nus_edu_sg/Esiid6VxqM9AnskADErBVK8BECar4wHoJvvaXhQw8TRjeQ?e=KSHiYJ)
+The size of `ros.bag` is too big. It is available [here](https://nusu-my.sharepoint.com/:f:/g/personal/li_ld_nus_edu_sg/Esiid6VxqM9AnskADErBVK8BECar4wHoJvvaXhQw8TRjeQ?e=KSHiYJ).
 
 
 > Note: The folders `SimA/` and `SimD/` contains test code and can be ignored.
