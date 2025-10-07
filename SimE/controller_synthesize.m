@@ -2,14 +2,13 @@ clear; clc; close all;
 
 
 %% load data ==============================================================
-% load("Gazebo_data_mat\data02.mat");
-load("Gazebo_data_mat/data_exp_04.mat");
-
+% load("Gazebo_data_mat/data_exp_04.mat");
+load("physical_data_mat/data_exp_09A.mat");
 
 
 sample_ratio = 1;
 
-data_input_output = data_input_output_04(1:end,:);
+data_input_output = data_exp_09A(1:end,:);
 
 [nRow, nColumn] = size(data_input_output);
 num_steps = nRow;
@@ -141,7 +140,7 @@ EB = EAEB(:,dim_xiA+1:dim_xiA+dim_xiB);
 
 dataA = bWI0*bWI0';
 dataB = -bXI1*bWI0';
-dataC = bXI1*bXI1' - eye(dim_x)*0.003;
+dataC = bXI1*bXI1' - eye(dim_x)*0.01;
 
 disp("min eig is " + min(eig(dataA)));
 
@@ -206,7 +205,7 @@ cvx_begin sdp % quiet
             blockS <= 0;
         end
         epGa >= 1e-12;
-        lyGa >= 0.90 * eye(dim_x);
+        lyGa >= 0.000001 * eye(dim_x);
         
 cvx_end
 

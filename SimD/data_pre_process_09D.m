@@ -168,8 +168,8 @@ data_input_output_09D = [actuator_control_x, actuator_control_y, actuator_contro
 
 Pstart01 = 7500;
 Pend01 = 8500;
-data_input_output_09D = data_input_output_09D(Pstart01:Pend01 , :);
-save('./Gazebo_data_mat/data09D.mat', 'data_input_output_09D');
+% data_input_output_09D = data_input_output_09D(Pstart01:Pend01 , :);
+% save('./Gazebo_data_mat/data09D.mat', 'data_input_output_09D');
 
 
 
