@@ -98,7 +98,7 @@ pose_angle(:,1) = pose_angle(:,1)-0.059; % sensor bias
 pose_angle(:,3) = pose_angle(:,3)+0.032; % sensor bias
 
 Pstar = 6500;
-Pend = 25000;
+Pend = 30000;
 
 time = time(Pstar:Pend, :);
 pose_angle = pose_angle(Pstar:Pend, :);
@@ -136,7 +136,7 @@ set(gcf, 'Position', [200, 200, 600, 300]);
 subplot(2,3,1)
 plot(time, pose_angle(:,1), 'k', 'LineWidth', 0.5);
 grid on;
-xlim([0 38]);
+% xlim([0 38]);
 ylim([-0.3 0.2]);
 set(gca,'fontsize',10,'fontname','Times');
 legend('$\phi$', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 10);
@@ -149,7 +149,7 @@ set(gca,'Position',[lm, bm+h+vs, w, h]);
 subplot(2,3,2)
 plot(time, pose_angle(:,2), 'k', 'LineWidth', 0.5);
 grid on;
-xlim([0 38]);
+% xlim([0 38]);
 ylim([-0.3 0.2]);
 set(gca,'fontsize',10,'fontname','Times');
 legend('$\theta$', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 10);
@@ -161,7 +161,7 @@ set(gca,'Position',[lm+w+hs, bm+h+vs, w, h]);
 subplot(2,3,3)
 plot(time, pose_angle(:,3), 'k', 'LineWidth', 0.5);
 grid on;
-xlim([0 38]);
+% xlim([0 38]);
 ylim([-0.3 0.2]);
 set(gca,'fontsize',10,'fontname','Times');
 legend('$\psi$', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 10);
@@ -175,7 +175,7 @@ set(gca,'Position',[lm+2*(w+hs), bm+h+vs, w, h]);
 subplot(2,3,4)
 plot(time, velocity_angle(:,1), 'k', 'LineWidth', 0.5);
 grid on;
-xlim([0 38]);
+% xlim([0 38]);
 ylim([-1 1]);
 set(gca,'fontsize',10,'fontname','Times');
 legend('$\omega_1$', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 10);
@@ -187,7 +187,7 @@ set(gca,'Position',[lm, bm, w, h]);
 subplot(2,3,5)
 plot(time, velocity_angle(:,2), 'k', 'LineWidth', 0.5);
 grid on;
-xlim([0 38]);
+% xlim([0 38]);
 ylim([-1 1]);
 set(gca,'fontsize',10,'fontname','Times');
 legend('$\omega_2$', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 10);
@@ -198,7 +198,7 @@ set(gca,'Position',[lm+w+hs, bm, w, h]);
 subplot(2,3,6)
 plot(time, velocity_angle(:,3), 'k', 'LineWidth', 0.5);
 grid on;
-xlim([0 38]);
+% xlim([0 38]);
 ylim([-1 1]);
 set(gca,'fontsize',10,'fontname','Times');
 legend('$\omega_3$', 'Fontname', 'Times New Roman', 'Interpreter', 'latex', 'FontSize', 10);
