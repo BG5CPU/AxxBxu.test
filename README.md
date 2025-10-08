@@ -21,3 +21,7 @@ The size of `ros.bag` is too big. It is available [here](https://nusu-my.sharepo
 
 
 > Note: The folders `SimA/` and `SimD/` contains test code and can be ignored.
+
+
+More demonstrations can be found at <https://nus-core.github.io/assets/standalone/AxxBxu/index.html>.
+
