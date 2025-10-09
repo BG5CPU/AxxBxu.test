@@ -12,7 +12,7 @@ It is workspace for controller synthesis for system $x^{+} = A(x)x + B(x)u$.
 
 `SimB/Data_cancellation_04.m` is for **Example 7** in the paper.  
 
-> Note: The experimental input and process noise/disturbances are randomly generated, so the results may differ from run to run.
+> Note: In simulation, the experimental input and process noise/disturbances are randomly generated, so the results may differ from run to run.
 
 `SimC/Quadrotor08.m` is for **Section V-A** in the paper.  
 
