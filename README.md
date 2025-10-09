@@ -20,8 +20,7 @@ It includes Gazebo simulation and physical experiment.
 The size of `ros.bag` is too big. It is available [here](https://nusu-my.sharepoint.com/:f:/g/personal/li_ld_nus_edu_sg/Esiid6VxqM9AnskADErBVK8BECar4wHoJvvaXhQw8TRjeQ?e=KSHiYJ).
 
 
-> More demonstrations and videos can be found at  
-> <https://nus-core.github.io/assets/standalone/AxxBxu/index.html>.
+More ***demonstrations and videos*** can be found at <https://nus-core.github.io/assets/standalone/AxxBxu/index.html>.
 
 
 
