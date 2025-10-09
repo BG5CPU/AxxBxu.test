@@ -1,4 +1,6 @@
-It is workspace for controller synthesis for system $x^{+} = A(x)x + B(x)u$.  
+It is workspace for controller synthesis for system $x^{+} = A(x)x + B(x)u$. 
+
+***Demonstrations and videos*** can be found at <https://nus-core.github.io/assets/standalone/AxxBxu/index.html>.
 
 `SimB/Model_stabilization_04.m` is for **Example 1** and **Example 2** in the paper.  
 
@@ -18,11 +20,6 @@ It is workspace for controller synthesis for system $x^{+} = A(x)x + B(x)u$.
 It includes Gazebo simulation and physical experiment.  
 
 The size of `ros.bag` is too big. It is available [here](https://nusu-my.sharepoint.com/:f:/g/personal/li_ld_nus_edu_sg/Esiid6VxqM9AnskADErBVK8BECar4wHoJvvaXhQw8TRjeQ?e=KSHiYJ).
-
-
-More ***demonstrations and videos*** can be found at <https://nus-core.github.io/assets/standalone/AxxBxu/index.html>.
-
-
 
 > Note: The folders `SimA/` and `SimD/` contains test code and can be ignored.
 
