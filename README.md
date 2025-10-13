@@ -17,7 +17,9 @@ It is workspace for controller synthesis for system $x^{+} = A(x)x + B(x)u$.
 `SimC/Quadrotor08.m` is for **Section V-A** in the paper.  
 
 `SimE` is for **Section V-B** in the paper. 
-It includes Gazebo simulation and physical experiment.  
+It includes Gazebo simulation and physical experiment. 
+
+To run `SimE/ros.AxxBxu.cpp`, you need ROS+Gazebo+XTDrone [environment](https://www.yuque.com/xtdrone); see also <https://arxiv.org/abs/2003.09700>.
 
 The size of `ros.bag` is too big. They are available [here](https://nusu-my.sharepoint.com/:f:/g/personal/li_ld_nus_edu_sg/Esiid6VxqM9AnskADErBVK8BECar4wHoJvvaXhQw8TRjeQ?e=KSHiYJ). Fortunately, the rosbag has been converted to csv in this repository.
 
