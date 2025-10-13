@@ -1,6 +1,7 @@
 It is workspace for controller synthesis for system $x^{+} = A(x)x + B(x)u$. 
 
-***Demonstrations and videos*** can be found at <https://nus-core.github.io/assets/standalone/AxxBxu/index.html>.
+***Demonstrations and videos*** can be found at <https://nus-core.github.io/assets/standalone/AxxBxu/index.html>.  
+***Preprint paper*** is coming soon.
 
 `SimB/Model_stabilization_04.m` is for **Example 1** and **Example 2** in the paper.  
 
@@ -19,7 +20,7 @@ It is workspace for controller synthesis for system $x^{+} = A(x)x + B(x)u$.
 `SimE` is for **Section V-B** in the paper. 
 It includes Gazebo simulation and physical experiment. 
 
-To run `SimE/ros.AxxBxu.cpp`, you need ROS+Gazebo+XTDrone [environment](https://www.yuque.com/xtdrone); see also <https://arxiv.org/abs/2003.09700>.
+To run `SimE/ros.AxxBxu.cpp`, you need ROS+Gazebo+XTDrone [environment](https://www.yuque.com/xtdrone); see also the [paper](https://arxiv.org/abs/2003.09700).
 
 The size of `ros.bag` is too big. They are available [here](https://nusu-my.sharepoint.com/:f:/g/personal/li_ld_nus_edu_sg/Esiid6VxqM9AnskADErBVK8BECar4wHoJvvaXhQw8TRjeQ?e=KSHiYJ). Fortunately, the rosbag has been converted to csv in this repository.
 
