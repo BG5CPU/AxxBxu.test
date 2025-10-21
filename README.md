@@ -1,7 +1,7 @@
 It is workspace for controller synthesis for system $x^{+} = A(x)x + B(x)u$. 
 
 ***Demonstrations and videos*** can be found at <https://nus-core.github.io/assets/standalone/AxxBxu/index.html>.  
-***Preprint paper*** is coming soon.
+***Preprint paper*** is available at <https://arxiv.org/abs/2510.16451>.
 
 `SimB/Model_stabilization_04.m` is for **Example 1** and **Example 2** in the paper.  
 
