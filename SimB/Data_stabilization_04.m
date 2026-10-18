@@ -125,11 +125,12 @@ cvx_begin sdp % quiet
     variable epGa semidefinite;
     variable lyGa(dim_x,dim_x) semidefinite;
     variable kY(dim_u,dim_x);
-    % variable mu_l semidefinite;
-    % variable mu_u semidefinite;
+    variable mu_l nonnegative;
+    variable mu_u nonnegative;
     
-    % minimize( mu_u - 0*mu_l + 1*epGa );
-    minimize( lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0.0*trace(lyGa) );
+    % epigraph form of  lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa,
+    % with mu_l <= lambda_min(lyGa) and mu_u >= lambda_max(lyGa)
+    minimize( mu_u - mu_l - 0.1*epGa );
 
     subject to   
         for iv = 1:length(barQ)
@@ -138,10 +139,10 @@ cvx_begin sdp % quiet
                        dataB',       -barQ{iv}*[lyGa;kY],   -dataA ];
             blockS <= 0;
         end
-        epGa >= 0.00001;
+        epGa >= 0.00001; %0.00001;
         lyGa >= 0.0001 * eye(dim_x);
-        % lyGa >= mu_l * eye(dim_x);
-        % lyGa <= (mu_l+mu_u) * eye(dim_x);
+        lyGa >= mu_l * eye(dim_x);
+        lyGa <= mu_u * eye(dim_x);
         
 cvx_end
 
@@ -151,6 +152,11 @@ vK = kY/lyGa;
 roac = sqrt( maxEig(lyGa)*minEig(lyGa) / ( maxEig(lyGa)^2 - epGa*minEig(lyGa) ) );
 roa  = min( 1, roac ) * rx;
 disp("radius of ROA is " + roa);
+
+
+% robustness parameters of (58): gammaAcl, bar gammaAcl, delta_x0, delta_w
+rbst = funcRobustPara( rx, 0.01, 0.01*pi, [EA1, EA2], EB1, vK, barQ, ...
+                       dataA, dataB, dataC, lyGa, epGa );
 
 
 
@@ -225,6 +231,65 @@ set(gca,'position',[0.11 0.24 0.86 0.30]);
 
 
 
+
+
+
+
+%% robustness parameters ==================================================
+% Computes the quantities of (58) and Remark 1 by sampling x over B_r:
+%   gAcl    : gamma_{Acl}    = max_{x in B_r} || A(x) + B(x)K ||      (58d)
+%   gBarMat : bar gamma_{Acl} with max || [XiA(x); XiB(x)K] ||, i.e. the induced
+%             norm of the map, since A(x)+B(x)K = [EA EB]*[XiA(x); XiB(x)K]
+%   gBarVtx : max_{Q in barQ} || Q*[I; K] ||, a sampling-free upper bound of gBarMat
+%             ([XiA(x); XiB(x)K] = Q(x)*[I; K] is linear in Q(x), the spectral norm
+%             is convex, and Q(x) lies in conv(barQ) by (49)). Reported for reference
+%             only: barQ over-approximates Q, so this value is valid but loose.
+%   dx0     : delta_x0 of (58b)
+%   dw      : delta_w of (58c), evaluated at gAcl
+%   dwB     : delta_w of (58c), evaluated at gBarMat
+function res = funcRobustPara( rx, dr, dth, EA, EB, vK, barQ, ...
+                               dataA, dataB, dataC, lyGa, epGa )
+% data-computable constant || Zc || + || Q^{1/2} || || A^{-1/2} ||  of (44b)
+EA_EB = [EA, EB];
+Zc = -dataB/dataA;
+Qc = dataB/dataA*dataB' - dataC; Qc = (Qc+Qc')/2;
+cst = norm(Zc) + sqrt(max(eig(Qc))) / sqrt(min(eig(dataA)));
+
+gAcl = 0; gMat = 0;
+for rs = dr:dr:rx
+    for ts = 0:dth:2*pi-dth
+        x1t = rs*cos(ts); x2t = rs*sin(ts);
+        if abs(x1t) < 1e-12, sc1 = 1; else, sc1 = sin(x1t)/x1t; end
+        XiA = blkdiag( [1; sc1], [1; x1t; x1t^2] );
+        XiB = [1; abs(x1t); abs(x2t); exp(x1t); exp(x2t)];
+        Acl = EA*XiA + EB*XiB*vK;
+        gAcl = max( gAcl, norm(Acl) );
+        gMat = max( gMat, norm( [XiA; XiB*vK] ) );
+    end
+end
+
+% vertex bound over barQ, no sampling involved
+IK = [eye(size(vK,2)); vK];
+gVtx = 0;
+for iv = 1:length(barQ)
+    gVtx = max( gVtx, norm( barQ{iv}*IK ) );
+end
+
+lmax = max(eig(lyGa)); lmin = min(eig(lyGa));
+dx0  = ( 2*lmax^2 - epGa*lmin ) / ( 2*lmin*lmax );
+dwf  = @(g) ( 4*g^2*lmax^5 + 2*epGa*lmin*lmax^3 ) / ( epGa^2*lmin^3 );
+
+res = struct( 'gAcl', gAcl, 'gBarMat', cst*gMat, 'gBarVtx', cst*gVtx, ...
+              'cst', cst, ...
+              'dx0', dx0, 'dw', dwf(gAcl), 'dwB', dwf(cst*gMat) );
+
+disp("norm of [EA EB] is " + norm(EA_EB) + ", data-driven constant is " + res.cst);
+disp("gamma_Acl is " + res.gAcl);
+disp("bar gamma_Acl (sampled, induced norm) is " + res.gBarMat);
+disp("bar gamma_Acl (vertices of barQ, loose) is " + res.gBarVtx);
+disp("delta_x0 is " + res.dx0);
+disp("delta_w is " + res.dw + " with gamma_Acl, " + res.dwB + " with bar gamma_Acl");
+end
 
 
 

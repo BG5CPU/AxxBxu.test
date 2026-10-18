@@ -105,8 +105,7 @@ cvx_begin sdp % quiet
     variable epGa semidefinite;
     variable lyGa(dim_x,dim_x) semidefinite;
     variable kY(dim_u,dim_x);
-    % variable mu_l semidefinite;
-    % variable mu_u semidefinite;
+    variables mu_l mu_u;
     
     % minimize( lambda_max(lyGa) - 1.0*lambda_min(lyGa) - 0.1*epGa );
     % minimize( lambda_max(lyGa) );
@@ -114,7 +113,8 @@ cvx_begin sdp % quiet
     % minimize( lambda_max(lyGa) - 1*trace(lyGa) - 0.1*epGa );
     % minimize( mu_u - 0*mu_l + 1*epGa );
     % minimize( trace(lyGa) - 1*epGa );
-    minimize( lambda_max(lyGa) - lambda_min(lyGa) - 0.0*epGa - 0.0*trace(lyGa) );
+    % Equivalent to minimizing lambda_max(lyGa) - lambda_min(lyGa).
+    minimize( mu_u - mu_l );
 
     subject to   
         for iv = 1:length(barG)
@@ -124,8 +124,8 @@ cvx_begin sdp % quiet
         end
         epGa >= 0.001;
         lyGa >= 0.01 * eye(dim_x);
-        % lyGa >= mu_l * eye(dim_x);
-        % lyGa <= (mu_l+mu_u) * eye(dim_x);
+        lyGa >= mu_l * eye(dim_x);
+        lyGa <= mu_u * eye(dim_x);
         
 cvx_end
 

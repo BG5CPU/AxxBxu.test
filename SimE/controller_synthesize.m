@@ -140,7 +140,7 @@ EB = EAEB(:,dim_xiA+1:dim_xiA+dim_xiB);
 
 dataA = bWI0*bWI0';
 dataB = -bXI1*bWI0';
-dataC = bXI1*bXI1' - eye(dim_x)*0.01;
+dataC = bXI1*bXI1' - eye(dim_x)*0.010;
 
 disp("min eig is " + min(eig(dataA)));
 
@@ -149,7 +149,14 @@ disp("min eig is " + min(eig(dataA)));
 %% solve the controller ===================================================
 
 % set the domain: |x| <= rx
-rx = 0.1; 
+rx = 0.5; 
+objective_weight_kY = 0.000000; % optional Frobenius penalty on kY
+objective_weight_kY_offdiag = 0.0001; % soft penalty on off-diagonal kY entries
+objective_weight_kY_last = 0.0000000; % soft penalty on the last three kY columns
+objective_weight_kY_36 = 0.00000001; % soft penalty on kY(3,6)
+objective_weight_kY_25 = 0.00000001; % soft penalty on kY(2,5)
+objective_weight_kY_14 = 0.000000008; % soft penalty on kY(1,4)
+offdiag_mask = ones(3) - eye(3);
 
 % XIA
 xiA11 = 1;
@@ -186,14 +193,28 @@ barQ = funcBarQ(xiA11, xiA12, xiA13, ...
                 xiB11, xiB12, xiB13);
 
 
+disp("number of polytope-overapproximation vertices is " + length(barQ));
+
 % solve sdp LMI 
+lmi_solve_timer = tic;
 cvx_solver mosek  % sdpt3
 cvx_begin sdp % quiet
 
     variable epGa semidefinite;
     variable lyGa(dim_x,dim_x) semidefinite;
     variable kY(dim_u,dim_x);
+    variable lyGa_min_proxy;
+    variable lyGa_max_proxy;
     
+    minimize( -0.0*epGa - 0.5*lyGa_min_proxy + 0.5*lyGa_max_proxy ...
+              + objective_weight_kY*norm(kY, 'fro') ...
+              + objective_weight_kY_offdiag*norm( ...
+                [offdiag_mask.*kY(:,1:3), ...
+                 offdiag_mask.*kY(:,4:6)], 'fro') ...
+              + objective_weight_kY_last*norm(kY(:,4:6), 'fro') ...
+              + objective_weight_kY_36*abs(kY(3,6)) ...
+              + objective_weight_kY_25*abs(kY(2,5)) ...
+              + objective_weight_kY_14*abs(kY(1,4)) );
     % minimize( 0.3*lambda_max(lyGa) - lambda_min(lyGa) - 0.1*epGa - 0*trace(lyGa) );
     % minimize( 1.0*lambda_max(lyGa) - 0.0*lambda_min(lyGa) - 0.0*epGa + 0.0*trace(lyGa) );
 
@@ -205,9 +226,14 @@ cvx_begin sdp % quiet
             blockS <= 0;
         end
         epGa >= 1e-12;
-        lyGa >= 0.000001 * eye(dim_x);
+        lyGa_min_proxy >= 0.000001;
+        lyGa - lyGa_min_proxy * eye(dim_x) >= 0;
+        lyGa_max_proxy * eye(dim_x) - lyGa >= 0;
+        lyGa_max_proxy >= lyGa_min_proxy;
         
 cvx_end
+lmi_solve_time = toc(lmi_solve_timer);
+disp("LMI solving time is " + lmi_solve_time + " s");
 
 vK = kY/lyGa;
 
